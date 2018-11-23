@@ -1,0 +1,54 @@
+CREATE TABLE PEDIDOS (
+items integer,
+cajas_grandes integer,
+cajas_pequenas integer,
+cantidad_cajas integer
+)
+
+
+insert into PEDIDOS(items,cajas_grandes,cajas_pequenas,cantidad_cajas) values (14,10,1,11);
+insert into PEDIDOS(items,cajas_grandes,cajas_pequenas,cantidad_cajas) values (15,11,3,14);
+insert into PEDIDOS(items,cajas_grandes,cajas_pequenas,cantidad_cajas) values (16,12,4,16);
+insert into PEDIDOS(items,cajas_grandes,cajas_pequenas,cantidad_cajas) values (17,25,19,34);
+
+
+----------1
+
+create or replace FUNCTION CALCULAR_CAJAS_NECESARIAS(numero_item INTEGER, numero_cajaG INTEGER, numero_cajaPq INTEGER) RETURN INTEGER IS
+  cont_CajaGrande INTEGER:=0;
+  cont_CajaPequeña INTEGER:=0;
+  cantidad_item INTEGER := numero_item;
+  cajaG INTEGER := numero_cajaG;
+  cajaP INTEGER := numero_cajaPq;
+  resultado INTEGER;
+BEGIN
+   while(cantidad_item >= 5) LOOP
+     IF (cajaG >= 0)AND(cantidad_item>=5)  THEN 
+        cont_CajaGrande := cont_CajaGrande + 1;
+        cantidad_item := cantidad_item - 5;
+        cajaG := cajaG -1;
+        IF cantidad_item <= 5 then
+          while(cantidad_item >= 1) LOOP
+            IF cajaP >= 0 THEN
+              cont_CajaPequeña := cont_CajaPequeña + 1;
+              cantidad_item := cantidad_item - 1;
+              cajaP := cajaP - 1;
+             ELSE
+              resultado := -1;
+            --exit;
+              RETURN resultado;
+            END IF;  
+        END LOOP;         
+      END IF;
+    END IF;
+  END LOOP;
+  resultado := cont_CajaGrande+cont_CajaPequeña;
+  RETURN resultado;
+END;
+
+declare
+ total integer;
+begin
+ total := CALCULAR_CAJAS_NECESARIAS(14, 10, 1);
+dbms_output.put_line('cajas: ' || total);
+end;
